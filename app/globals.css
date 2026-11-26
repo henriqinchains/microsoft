@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+:root {
+  /* Os valores de tema são hex para que o GSAP consiga interpolá-los.
+     Começa no tema escuro, o mesmo do primeiro capítulo (ver lib/chapters.ts). */
+  --bg: #0D1B2E;
+  --fg: #EEF2F5;
+  --mute: #93A1B2;
+  --line: #2A3D57;
+  --surface: #16283F;
+
+  --ms-red: #F25022;
+  --ms-green: #7FBA00;
+  --ms-blue: #00A4EF;
+  --ms-yellow: #FFB900;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-mute: var(--mute);
+  --color-line: var(--line);
+  --color-ms-red: var(--ms-red);
+  --color-ms-green: var(--ms-green);
+  --color-ms-blue: var(--ms-blue);
+  --color-ms-yellow: var(--ms-yellow);
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-jetbrains);
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  /* Sem barra de rolagem: a navegação pelos capítulos (ChapterNav) já mostra onde se está. */
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cursor próprio (components/Cursor.tsx): esconde o do sistema só quando ele está ativo. */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-hanken), system-ui, sans-serif;
+  font-feature-settings: "ss01";
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--ms-blue);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ms-blue);
+  outline-offset: 3px;
+}
+
+/* Escala tipográfica */
+.t-display {
+  font-size: clamp(3.5rem, 15vw, 13.5rem);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+.t-title {
+  font-size: clamp(2.75rem, 7.2vw, 6.75rem);
+  font-weight: 750;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+.t-heading {
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  font-weight: 650;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.t-statement {
+  font-size: clamp(2rem, 4.6vw, 4.25rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+.t-body {
+  font-size: clamp(1rem, 1.15vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--mute);
+  max-width: 36ch;
+}
+
+/* Palavras para revelação (ver RevealText) */
+.rw-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.rw {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Tamanho do logo na abertura (lido pelo GSAP via offsetWidth) */
+.hero-stage {
+  --s: clamp(52px, min(10vw, 10svh), 118px);
+  --g: calc(var(--s) * 0.09);
+}
+
+/* Beats empilhados de texto nas cenas fixadas */
+.beats {
+  display: grid;
+}
+.beats > * {
+  grid-area: 1 / 1;
+}
+
+/* Texto com gradiente animado (Copilot). */
+.aurora-text {
+  background-image: linear-gradient(100deg, #3B82F6, #22D3EE, #84CC16, #FBBF24, #F472B6, #8B5CF6, #3B82F6);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: aurora-shift 9s linear infinite;
+}
+@keyframes aurora-shift {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* Granulação de filme animada sobre o vídeo do Hero: mantém o quadro "vivo"
+   mesmo com o scroll parado. Maior que a tela para poder se deslocar. */
+.film-grain {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: film-grain 0.8s steps(1) infinite;
+}
+@keyframes film-grain {
+  0% { transform: translate(0, 0); }
+  17% { transform: translate(-6%, 3%); }
+  33% { transform: translate(4%, -7%); }
+  50% { transform: translate(-3%, 8%); }
+  67% { transform: translate(7%, 2%); }
+  83% { transform: translate(-8%, -4%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
